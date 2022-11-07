@@ -86,22 +86,25 @@ function App(props) {
   const [funt, setFunt] = useState(0);
   const [lev, setLev] = useState(0);
 
+  
+
   let ourServis = new Servisec();
   const setValue = (txt) => {
     ourServis.getData().then((resp) => {
-      let answ = resp.filter((item) => item.txt === txt);
+      let answ = resp.find((item) => item.txt === txt);
+      let path = Math.floor(answ.rate);
       switch (txt) {
         case "Долар США":
-          setUsd(Math.floor(answ[0].rate));
+          setUsd(path);
           break;
         case "Євро":
-          setEuro(Math.floor(answ[0].rate));
+          setEuro(path);
           break;
         case "Фунт стерлінгів":
-          setFunt(Math.floor(answ[0].rate));
+          setFunt(path);
           break;
         case "Болгарський лев":
-          setLev(Math.floor(answ[0].rate));
+          setLev(path);
           break;
       }
     });
@@ -123,14 +126,23 @@ function App(props) {
     setState((value = 1));
   };
 
+  const data = [
+    {name:'Долари',state:usd},
+    {name:'Фунти',state:funt},
+    {name:'Євро',state:euro},
+    {name:'Лев',state:lev}
+  ];
   return (
     <div className="app">
       <div className="counter">{value}</div>
       <div className="controls">
-        <button onClick={() => onChangeValue(usd)}>Долари</button>
-        <button onClick={() => onChangeValue(funt)}>Фунти</button>
-        <button onClick={() => onChangeValue(euro)}>Євро</button>
-        <button onClick={() => onChangeValue(lev)}>Лев</button>
+        {data.map(btn=>{
+          return(
+            <button key={Math.random()} 
+            onClick={()=>onChangeValue(btn.state)}>{btn.name}</button>
+          )
+        })}
+
         <button onClick={() => onDefault()}>Скинути</button>
       </div>
     </div>
@@ -138,12 +150,4 @@ function App(props) {
 }
 
 export default App;
-//   let res = getData();
-//   res.then(resp=>{
-//       return resp.filter(item=>{
-//         return item.txt == 'Долар США';
-//     })
-//   }).then(answ=>{
-//     setUsd(Math.floor(answ[0].rate))
-//   })
-// },[])
+
